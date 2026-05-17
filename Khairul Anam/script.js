@@ -1,32 +1,38 @@
 /*==================== THEME TOGGLE (LIGHT/DARK) ====================*/
 const themeButton = document.getElementById('theme-button')
 const darkTheme = 'dark-theme'
-const iconTheme = 'ri-sun-line'
+const moonIcon = 'ri-moon-line'
+const sunIcon = 'ri-sun-line'
 
-// Previously selected topic (if user selected)
-const selectedTheme = localStorage.getItem('selected-theme')
-const selectedIcon = localStorage.getItem('selected-icon')
+if (themeButton) {
+    const selectedTheme = localStorage.getItem('selected-theme')
+    const selectedIcon = localStorage.getItem('selected-icon')
 
-// We obtain the current theme that the interface has by validating the dark-theme class
-const getCurrentTheme = () => document.body.classList.contains(darkTheme) ? 'dark' : 'light'
-const getCurrentIcon = () => themeButton.classList.contains(iconTheme) ? 'ri-moon-line' : 'ri-sun-line'
+    const getCurrentTheme = () => document.body.classList.contains(darkTheme) ? 'dark' : 'light'
+    const getCurrentIcon = () => themeButton.classList.contains(sunIcon) ? moonIcon : sunIcon
 
-// We validate if the user previously chose a topic
-if (selectedTheme) {
-    // If the validation is fulfilled, we ask what the issue was to know if we activated or deactivated the dark
-    document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](darkTheme)
-    themeButton.classList[selectedIcon === 'ri-moon-line' ? 'add' : 'remove'](iconTheme)
+    if (selectedTheme) {
+        document.body.classList[selectedTheme === 'dark' ? 'add' : 'remove'](darkTheme)
+    }
+
+    themeButton.classList.remove(moonIcon, sunIcon)
+    themeButton.classList.add(selectedIcon || (document.body.classList.contains(darkTheme) ? sunIcon : moonIcon))
+
+    themeButton.addEventListener('click', () => {
+        document.body.classList.toggle(darkTheme)
+
+        if (document.body.classList.contains(darkTheme)) {
+            themeButton.classList.remove(moonIcon)
+            themeButton.classList.add(sunIcon)
+        } else {
+            themeButton.classList.remove(sunIcon)
+            themeButton.classList.add(moonIcon)
+        }
+
+        localStorage.setItem('selected-theme', getCurrentTheme())
+        localStorage.setItem('selected-icon', getCurrentIcon())
+    })
 }
-
-// Activate / deactivate the theme manually with the button
-themeButton.addEventListener('click', () => {
-    // Add or remove the dark / icon theme
-    document.body.classList.toggle(darkTheme)
-    themeButton.classList.toggle(iconTheme)
-        // We save the theme and the current icon that the user chose
-    localStorage.setItem('selected-theme', getCurrentTheme())
-    localStorage.setItem('selected-icon', getCurrentIcon())
-})
 
 /*==================== SCROLL SECTIONS ACTIVE LINK ====================*/
 const sections = document.querySelectorAll('section[id]')
@@ -37,12 +43,13 @@ function scrollActive() {
     sections.forEach(current => {
         const sectionHeight = current.offsetHeight
         const sectionTop = current.offsetTop - 50;
-        sectionId = current.getAttribute('id')
+        const sectionId = current.getAttribute('id')
+        const sectionLink = document.querySelector('.nav__menu a[href*=' + sectionId + ']')
 
         if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            document.querySelector('.nav__menu a[href*=' + sectionId + ']').classList.add('active-link')
+            sectionLink ? .classList.add('active-link')
         } else {
-            document.querySelector('.nav__menu a[href*=' + sectionId + ']').classList.remove('active-link')
+            sectionLink ? .classList.remove('active-link')
         }
     })
 }
